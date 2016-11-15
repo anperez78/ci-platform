@@ -1,0 +1,10 @@
+---
+- hosts: jenkins
+  become: yes
+  roles:
+    - { role: geerlingguy.jenkins }
+
+- hosts: artifactory
+  become: yes
+  roles:
+    - { role: jenscobie.artifactory }
