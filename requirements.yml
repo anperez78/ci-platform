@@ -1,3 +1,4 @@
 ---
 - src: geerlingguy.jenkins
 - src: jenscobie.artifactory
+- src: geerlingguy.git
