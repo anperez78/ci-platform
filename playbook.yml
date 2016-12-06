@@ -4,6 +4,15 @@
   roles:
     - { role: geerlingguy.jenkins }
     - { role: geerlingguy.git }
+  post_tasks:
+    - name: Set Artifactory plugin configuration
+      copy:
+        src: files/jenkins/org.jfrog.hudson.ArtifactoryBuilder.xml
+        dest: /var/lib/jenkins/org.jfrog.hudson.ArtifactoryBuilder.xml
+        owner: jenkins
+        group: jenkins
+        mode: 0644
+      notify: restart jenkins
 
 - hosts: artifactory
   become: yes
