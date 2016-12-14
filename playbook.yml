@@ -4,17 +4,61 @@
   roles:
     - { role: geerlingguy.jenkins }
     - { role: geerlingguy.git }
+    - { role: geerlingguy.repo-epel }
   post_tasks:
-    - name: Set Artifactory plugin configuration
+
+    - name: create ssh folder
+      file:
+        path: "{{ jenkins_home }}/.ssh"
+        state: directory
+        mode: 0755
+
+    - name: Copy SSH keys
       copy:
-        src: files/jenkins/org.jfrog.hudson.ArtifactoryBuilder.xml
-        dest: /var/lib/jenkins/org.jfrog.hudson.ArtifactoryBuilder.xml
+        src: files/ssh_keys/{{ item }}
+        dest: "{{ jenkins_home }}/.ssh/{{ item }}"
         owner: jenkins
         group: jenkins
-        mode: 0644
-      notify: restart jenkins
+        mode: 0400
+      with_items:
+        - 'id_jenkins_rsa'
+        - 'id_jenkins_rsa.pub'
+
+    - name: Install ansible
+      yum:
+        name: ansible
+        state: present
 
 - hosts: artifactory
   become: yes
   roles:
     - { role: jenscobie.artifactory }
+
+- hosts: service-api
+  become: yes
+  vars:
+    createuser: 'jenkins'
+    createpassword: 'myamazingpassword'
+  tasks:
+    - name: Setup | create user
+      command: useradd -m {{ createuser }} creates=/home/{{ createuser }}
+
+    - name: Setup | set user password
+      shell: usermod -p $(echo '{{ createpassword }}' | openssl passwd -1 -stdin) {{ createuser }}
+
+    - name: Setup | authorized key upload
+      authorized_key:
+        user: "{{ createuser }}"
+        key: "{{ item }}"
+        path: '/home/{{ createuser }}/.ssh/authorized_keys'
+        manage_dir: no
+      with_file:
+        - 'files/ssh_keys/id_jenkins_rsa.pub'
+
+    - name: Sudoers | update sudoers file and validate
+      lineinfile:
+        dest: /etc/sudoers
+        insertafter: EOF
+        line: '{{ createuser }} ALL=(ALL) NOPASSWD: ALL'
+        regexp: '{{ createuser }} ALL=(ALL) NOPASSWD: ALL'
+        state: present
