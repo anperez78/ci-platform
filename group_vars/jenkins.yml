@@ -10,3 +10,9 @@ jenkins_plugins: [
   'ansible',
   'ansicolor'
 ]
+
+# ssh_keys role
+ssh_keys_mode: 'client'
+ssh_keys_client_home: '{{ jenkins_home }}'
+ssh_keys_client_owner: 'jenkins'
+ssh_keys_client_group: 'jenkins'
