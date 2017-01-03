@@ -17,13 +17,3 @@
   become: yes
   roles:
     - jenscobie.artifactory
-
-- hosts: service-api
-  become: yes
-  roles:
-    - sshkeys
-
-- hosts: database
-  become: yes
-  roles:
-    - postgresql

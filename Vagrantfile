@@ -11,16 +11,6 @@ servers = [
     name: 'artifactory',
     group: 'artifactory',
     ip: '192.168.39.11'
-  },
-  {
-    name: 'service-api',
-    group: 'service-api',
-    ip: '192.168.39.12'
-  },
-  {
-    name: 'database',
-    group: 'database',
-    ip: '192.168.39.13'
   }
 ]
 
