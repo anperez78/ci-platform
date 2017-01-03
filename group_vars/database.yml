@@ -24,3 +24,5 @@ postgresql_hba_config_entries:
     user: "{{ app_service_db_user }}"
     address: "192.168.39.12/32"
     auth: md5
+
+postgresql_listen_addresses: "'*'"
